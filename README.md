@@ -1,1 +1,1 @@
-# ressource_selection_simulator
+# Strategic Ressource Selection Simulator
