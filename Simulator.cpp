@@ -65,7 +65,7 @@ int Simulator::run_simulation(int steps, int data_collection_interval, vector<fu
     return -1;
 }
 
-Simulator::Simulator(const int number_of_types, vector<Actor> actors, vector<Resource> resources,
+Simulator::Simulator(vector<Actor> actors, vector<Resource> resources,
                      function<function_space(function_space)> utility_function) :
-                     number_of_types(number_of_types), actors(actors), resources(resources), utility_function(utility_function) {
+                     actors(actors), resources(resources), utility_function(utility_function) {
 }
