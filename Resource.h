@@ -15,6 +15,7 @@ using namespace std;
 typedef struct Resource {
     int max_slots = INF;
     int total_actors_at_q = 0;
+    const int nr_of_types;
     //unordered_set<int> actors_at_q;
     vector<double_t> actors_of_type;    //double_t so fraction is double_t as well
 
