@@ -30,6 +30,7 @@ private:
 
 public:
     const int number_of_types;
+    function_space get_util_for_type_at_q(actor_type t, Resource q, function<function_space(function_space)> custom_util);
     Simulator(const int number_of_types, vector<Actor> actors, vector<Resource> resources, function<function_space(function_space)> utility_function);
 } Simulator;
 

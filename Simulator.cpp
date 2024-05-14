@@ -6,22 +6,33 @@
 #include <iostream>
 
 bool Simulator::resource_q_available(Resource q) {
-    return q.max_slots > q.actors_at_q.size();
+    return q.max_slots > q.total_actors_at_q;
+}
+
+function_space Simulator::get_util_for_type_at_q(actor_type t, Resource q, function<function_space(function_space)> custom_util) {
+    if(q.total_actors_at_q) return custom_util(q.actors_of_type[t]/q.total_actors_at_q);
+    else return 0;
 }
 
 bool Simulator::swap_resource_for_actor(Actor a) {
     function_space max_util = -1;
     int max_q_idx = -1;
     for(auto q_idx:a.available_resources) {
-        if(resource_q_available(resources[q_idx]) && utility_function(resources[q_idx].actors_of_type[a.type]) > max_util) {
-                max_util = utility_function(resources[q_idx].actors_of_type[a.type]);
+        if(resource_q_available(resources[q_idx]) && get_util_for_type_at_q(a.type,resources[q_idx],utility_function) > max_util) {
+                max_util = get_util_for_type_at_q(a.type,resources[q_idx],utility_function);
                 max_q_idx = q_idx;
             }
         }
     if(max_q_idx != a.cur_resource) {       //also handles case in which no adjacent resource has slots left and updates resources fractions
-        if(a.cur_resource != -1) resources[a.cur_resource].actors_of_type[a.type]--;
+        if(a.cur_resource != -1) {
+            resources[a.cur_resource].actors_of_type[a.type]--;
+            resources[a.cur_resource].total_actors_at_q--;
+        }
         a.cur_resource = max_q_idx;
-        if(max_q_idx != -1) resources[max_q_idx].actors_of_type[a.type]++;
+        if(max_q_idx != -1) {
+            resources[max_q_idx].actors_of_type[a.type]++;
+            resources[max_q_idx].total_actors_at_q++;
+        }
         return 1;
     }
     return 0;
@@ -30,7 +41,7 @@ bool Simulator::swap_resource_for_actor(Actor a) {
 function_space Simulator::get_total_utility(function<function_space(function_space)> utility_function) {
     function_space res = 0;
     for(auto a: actors) {
-        res += utility_function(resources[a.cur_resource].actors_of_type[a.type]);
+        res += get_util_for_type_at_q(a.type, resources[a.cur_resource],utility_function);
     }
     return res;
 }
