@@ -6,7 +6,9 @@
 
 int main() {
     std::cout << "Hello, World!" << std::endl;
-    vector<int> v = {1,2};
-    //vector<Actor> a = {Actor(1,1,v)};
+
+    Actor a1 = Actor(1,{1,2});
+    Actor a2 = Actor(2,{2});
+    Resource q1 = Resource(2,)
     return 0;
 }

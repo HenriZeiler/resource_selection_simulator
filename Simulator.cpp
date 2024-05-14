@@ -13,13 +13,15 @@ bool Simulator::swap_resource_for_actor(Actor a) {
     function_space max_util = -1;
     int max_q_idx = -1;
     for(auto q_idx:a.available_resources) {
-        if(resource_q_available(resources[q_idx]) && utility_function(resources[q_idx].fractions_of_types[a.type])>max_util) {
-                max_util = utility_function(resources[q_idx].fractions_of_types[a.type]);
+        if(resource_q_available(resources[q_idx]) && utility_function(resources[q_idx].actors_of_type[a.type]) > max_util) {
+                max_util = utility_function(resources[q_idx].actors_of_type[a.type]);
                 max_q_idx = q_idx;
             }
         }
-    if(max_q_idx != a.cur_resource) {
+    if(max_q_idx != a.cur_resource) {       //also handles case in which no adjacent resource has slots left and updates resources fractions
+        if(a.cur_resource != -1) resources[a.cur_resource].actors_of_type[a.type]--;
         a.cur_resource = max_q_idx;
+        if(max_q_idx != -1) resources[max_q_idx].actors_of_type[a.type]++;
         return 1;
     }
     return 0;
@@ -28,7 +30,7 @@ bool Simulator::swap_resource_for_actor(Actor a) {
 function_space Simulator::get_total_utility(function<function_space(function_space)> utility_function) {
     function_space res = 0;
     for(auto a: actors) {
-        res += utility_function(resources[a.cur_resource].fractions_of_types[a.type]);
+        res += utility_function(resources[a.cur_resource].actors_of_type[a.type]);
     }
     return res;
 }
