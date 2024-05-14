@@ -13,12 +13,11 @@ using namespace std;
 
 
 typedef struct Resource {
-    const int idx;
     int max_slots = INF;
     unordered_set<int> actors_at_q;
     vector<double_t> fractions_of_types;
 
-    Resource(int idx, const int max_slots, const int nr_of_types);
+    Resource(const int max_slots, const int nr_of_types);
 } Resource;
 
 

@@ -4,6 +4,6 @@
 
 #include "Resource.h"
 
-Resource::Resource(const int idx, const int max_slots, const int nr_of_types) : idx(idx), max_slots(max_slots) {
+Resource::Resource(const int max_slots, const int nr_of_types) : max_slots(max_slots) {
     fractions_of_types = vector<double_t>(nr_of_types);
 }

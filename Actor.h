@@ -11,11 +11,11 @@
 using namespace std;
 
 typedef struct Actor {
-    const int idx;
+    //const int idx;
     const actor_type type;
     int cur_resource;
     const vector<int> available_resources;
-    Actor(const int idx, const actor_type type,vector<int> available_resources);
+    Actor(const actor_type type,vector<int> available_resources);
 } Actor;
 
 
