@@ -7,12 +7,11 @@
 
 #include <limits.h>
 #include <unordered_set>
-#include "Simulator.h"
 #define INF INT_MAX
 using namespace std;
 
 
-class Resource {
+typedef class Resource {
     const int idx;
     int max_slots = INF;
     unordered_set<int> actors_at_q;
@@ -25,7 +24,7 @@ class Resource {
     void join_resource(int a);
 public:
     Resource(int idx, const int max_slots, const int nr_of_types);
-};
+} Resource;
 
 
 #endif //RESSOURCE_SELECTION_SIMULATOR_RESOURCE_H
