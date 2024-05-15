@@ -13,7 +13,7 @@ using namespace std;
 
 
 typedef struct Resource {
-    int max_slots = INF;
+    int max_slots = INF;        //not const to allow intervention
     int total_actors_at_q = 0;
     const int nr_of_types;
     //unordered_set<int> actors_at_q;

@@ -5,7 +5,7 @@
 #include "Simulator.h"
 #include <iostream>
 
-bool Simulator::resource_q_available(Resource q) {
+bool Simulator::resource_q_available(const Resource q) {
     return q.max_slots > q.total_actors_at_q;
 }
 
@@ -17,11 +17,12 @@ function_space Simulator::get_util_for_type_at_q(actor_type t, Resource q, funct
     else return 0;
 }
 
-bool Simulator::swap_resource_for_actor(Actor a) {
-    function_space max_util = -1;
-    int max_q_idx = -1;
+bool Simulator::swap_resource_for_actor(Actor& a) {
+    function_space max_util = (a.cur_resource != -1)? get_util_for_type_at_q(a.type,resources[a.cur_resource],utility_function): -1;
+    int max_q_idx = a.cur_resource;
     for(auto q_idx:a.available_resources) {
         if(resource_q_available(resources[q_idx]) && get_util_for_type_at_q(a.type,resources[q_idx],utility_function) > max_util) {
+            clog << "got util: " << get_util_for_type_at_q(a.type,resources[q_idx],utility_function) << " from " << q_idx << endl;
                 max_util = get_util_for_type_at_q(a.type,resources[q_idx],utility_function);
                 max_q_idx = q_idx;
             }
@@ -32,6 +33,7 @@ bool Simulator::swap_resource_for_actor(Actor a) {
             resources[a.cur_resource].total_actors_at_q--;
         }
         a.cur_resource = max_q_idx;
+        clog << "actor type " << a.type << " swapped resource to " << a.cur_resource <<  endl;
         if(max_q_idx != -1) {
             resources[max_q_idx].actors_of_type[a.type]++;
             resources[max_q_idx].total_actors_at_q++;
@@ -51,7 +53,7 @@ function_space Simulator::get_total_utility(function<function_space(function_spa
 
 function_space Simulator::get_total_segregation_welfare(function<function_space(function_space)> utility_function) {
     function_space res = 0;
-    for(auto a: actors) {
+    for(Actor a: actors) {
         res += get_util_for_type_at_q(a.type, resources[a.cur_resource],utility_function,true);
     }
     return res;
@@ -59,25 +61,28 @@ function_space Simulator::get_total_segregation_welfare(function<function_space(
 
 int Simulator::step() {
     int swaps_made = 0;
-    for(auto a:actors) {
+    for(auto& a:actors) {
         swaps_made += swap_resource_for_actor(a);
+        clog << "after return: " << a.cur_resource << endl;
     }
+    clog << "swaps made in step: " << swaps_made << endl;
     return swaps_made;
 }
 
 //returns step at which nash equil was reached or -1
 int Simulator::run_simulation(int steps, int data_collection_interval, vector<function_space>& social_welfare_at_collection_step, vector<vector<vector<function_space>>>& fraction_at_q_for_type_at_collection_step, vector<function_space>& segregation_welfare_at_collection_step) {
+    fraction_at_q_for_type_at_collection_step.resize(resources[0].nr_of_types);
     for(int i=0;i<steps;i++) {
-        if(i%data_collection_interval==0) {
-            social_welfare_at_collection_step[i/data_collection_interval] = get_total_utility(utility_function);
-            segregation_welfare_at_collection_step[i/ data_collection_interval] = get_total_segregation_welfare([](int x){return x;});
-            for(int q_idx=0;q_idx=resources.size();q_idx++) {
-                for(int t=0;t<resources[0].nr_of_types;t++) fraction_at_q_for_type_at_collection_step[q_idx].push_back(resources[q_idx].actors_of_type);
-            }
-        }
         if(!step()) {
-            clog<< "nash equilibrium reached in step: " << i+1 << endl;
+            clog<< "nash equilibrium reached in step: " << i << endl;
             return i+1;
+        }
+        if(i%data_collection_interval==0) {
+            social_welfare_at_collection_step.push_back(get_total_utility(utility_function));
+            segregation_welfare_at_collection_step.push_back(get_total_segregation_welfare([](int x){return x;}));
+            for(int q_idx=0;q_idx<resources.size();q_idx++) {
+                fraction_at_q_for_type_at_collection_step[q_idx].push_back(resources[q_idx].actors_of_type);
+            }
         }
     }
     return -1;

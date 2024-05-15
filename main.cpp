@@ -7,8 +7,8 @@
 
 int main() {
     vector<Actor> actors;
-    actors.push_back(Actor(1,{1,2}));
-    actors.push_back(Actor(2,{2}));
+    actors.push_back(Actor(0,{0,1}));
+    actors.push_back(Actor(1,{1}));
     vector<Resource> resources;
     resources.push_back(Resource(2,2));
     resources.push_back(Resource(2,2));

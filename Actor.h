@@ -14,7 +14,7 @@ typedef struct Actor {
     //const int idx;
     const actor_type type;
     int cur_resource;
-    const vector<int> available_resources;
+    const vector<int> available_resources;  //0-indexed for compatibility with simulator.actors
     Actor(const actor_type type,vector<int> available_resources);
 } Actor;
 
