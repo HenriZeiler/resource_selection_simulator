@@ -1,10 +1,5 @@
-//
-// Created by Henri Zeiler on 12.05.24.
-//
 #ifndef RESSOURCE_SELECTION_SIMULATOR_SIMULATOR_H
 #define RESSOURCE_SELECTION_SIMULATOR_SIMULATOR_H
-
-
 
 #include <cstdlib>
 #include <vector>

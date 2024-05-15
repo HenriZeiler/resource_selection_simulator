@@ -70,8 +70,8 @@ int Simulator::step() {
 }
 
 //returns step at which nash equil was reached or -1
-int Simulator::run_simulation(int steps, int data_collection_interval, vector<function_space>& social_welfare_at_collection_step, vector<vector<vector<function_space>>>& fraction_at_q_for_type_at_collection_step, vector<function_space>& segregation_welfare_at_collection_step) {
-    fraction_at_q_for_type_at_collection_step.resize(resources[0].nr_of_types);
+int Simulator::run_simulation(int steps, int data_collection_interval, vector<function_space>& social_welfare_at_collection_step, vector<vector<vector<function_space>>>& fraction_at_q_at_collection_step_for_type, vector<function_space>& segregation_welfare_at_collection_step) {
+    fraction_at_q_at_collection_step_for_type.resize(resources.size());
     for(int i=0;i<steps;i++) {
         if(!step()) {
             clog<< "nash equilibrium reached in step: " << i << endl;
@@ -81,7 +81,12 @@ int Simulator::run_simulation(int steps, int data_collection_interval, vector<fu
             social_welfare_at_collection_step.push_back(get_total_utility(utility_function));
             segregation_welfare_at_collection_step.push_back(get_total_segregation_welfare([](int x){return x;}));
             for(int q_idx=0;q_idx<resources.size();q_idx++) {
-                fraction_at_q_for_type_at_collection_step[q_idx].push_back(resources[q_idx].actors_of_type);
+                fraction_at_q_at_collection_step_for_type[q_idx].resize(resources[0].nr_of_types);
+                for(int t=0; t<resources[q_idx].nr_of_types; t++) {
+                    cout << resources[q_idx].nr_of_types << endl;
+                    if (resources[q_idx].total_actors_at_q) fraction_at_q_at_collection_step_for_type[q_idx][i].push_back(resources[q_idx].actors_of_type[t]/resources[q_idx].total_actors_at_q);
+                    else fraction_at_q_at_collection_step_for_type[q_idx][i].push_back(0);
+                }
             }
         }
     }
