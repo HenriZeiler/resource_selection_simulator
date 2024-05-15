@@ -83,7 +83,6 @@ int Simulator::run_simulation(int steps, int data_collection_interval, vector<fu
             for(int q_idx=0;q_idx<resources.size();q_idx++) {
                 fraction_at_q_at_collection_step_for_type[q_idx].resize(resources[0].nr_of_types);
                 for(int t=0; t<resources[q_idx].nr_of_types; t++) {
-                    cout << resources[q_idx].nr_of_types << endl;
                     if (resources[q_idx].total_actors_at_q) fraction_at_q_at_collection_step_for_type[q_idx][i].push_back(resources[q_idx].actors_of_type[t]/resources[q_idx].total_actors_at_q);
                     else fraction_at_q_at_collection_step_for_type[q_idx][i].push_back(0);
                 }

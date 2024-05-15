@@ -4,9 +4,7 @@
 #include "Actor.h"
 #include "Resource.h"
 #include "util.h"
-#include <matplot/matplot.h>
-
-using namespace matplot;
+#include "visualize.h"
 int main() {
     //-----Simulation Parameters-----
     int sim_steps = 5;
@@ -26,14 +24,6 @@ int main() {
     vector<vector<vector<function_space>>> fraction_at_q_at_collection_step_for_type;
     vector<function_space> segregation_welfare_at_collection_step;
     sim.run_simulation(sim_steps,collection_data_interval,social_welfare_at_collection_step,fraction_at_q_at_collection_step_for_type,segregation_welfare_at_collection_step);
-    tiledlayout(sim_steps,resources.size());
-    for(int i=0;i<resources.size();i++) {
-        for(int j=0;j<fraction_at_q_at_collection_step_for_type[0].size();j++) {
-            auto ax_tmp = nexttile();
-            pie(ax_tmp,fraction_at_q_at_collection_step_for_type[i][j]);
-            title("Resource " + to_string(i) + " at step " + to_string(j));
-        }
-    }
-    show();
+    visualize_fractions(sim_steps,resources.size(),fraction_at_q_at_collection_step_for_type);
     return 0;
 }
