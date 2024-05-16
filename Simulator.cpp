@@ -9,8 +9,9 @@ bool Simulator::resource_q_available(const Resource q) {
     return q.max_slots > q.total_actors_at_q;
 }
 
-function_space Simulator::get_util_for_type_at_q(actor_type t, Resource q, function<function_space(function_space)> custom_util, bool measure_segregation) {
+function_space Simulator::get_util_for_type_at_q(actor_type t, Resource q, function<function_space(function_space)> custom_util, const bool measure_segregation) {
     if(q.total_actors_at_q) {
+        if(q.total_actors_at_q == 1 && q.actors_of_type[t] == 1) return empty_neighbourhood_optimal_post_swap;
         if(measure_segregation) return custom_util((q.total_actors_at_q-q.actors_of_type[t])/q.total_actors_at_q);
         else return custom_util(q.actors_of_type[t]/q.total_actors_at_q);
     }
@@ -74,7 +75,7 @@ int Simulator::run_simulation(int steps, int data_collection_interval, vector<fu
     fraction_at_q_at_collection_step_for_type.resize(resources.size());
     for(int i=0;i<steps;i++) {
         if(!step()) {
-            clog<< "nash equilibrium reached in step: " << i << endl;
+            cout<< "nash equilibrium reached in step " << i << endl;
             return i+1;
         }
         if(i%data_collection_interval==0) {
@@ -93,6 +94,6 @@ int Simulator::run_simulation(int steps, int data_collection_interval, vector<fu
 }
 
 Simulator::Simulator(vector<Actor> actors, vector<Resource> resources,
-                     function<function_space(function_space)> utility_function) :
-                     actors(actors), resources(resources), utility_function(utility_function) {
+                     function<function_space(function_space)> utility_function, const bool isolation_optimal) :
+        actors(actors), resources(resources), utility_function(utility_function), empty_neighbourhood_optimal_post_swap(isolation_optimal){
 }
