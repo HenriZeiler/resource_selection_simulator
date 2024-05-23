@@ -12,26 +12,39 @@ bool Simulator::resource_q_available(const Resource q) {
 function_space Simulator::get_util_for_type_at_q(actor_type t, Resource q, function<function_space(function_space)> custom_util, const bool measure_segregation) {
     if(impact_aware) {
         if(q.total_actors_at_q) {
-            if(measure_segregation) return custom_util((q.total_actors_at_q-q.actors_of_type[t])/q.total_actors_at_q);
-            else return custom_util(q.actors_of_type[t]/q.total_actors_at_q);
+            if(measure_segregation) return (q.total_actors_at_q-q.actors_of_type[t])/(q.total_actors_at_q+1);
+            else return custom_util((q.actors_of_type[t]+1)/(q.total_actors_at_q+1));
         }
-        else return empty_neighbourhood_optimal_post_swap;
+        else return empty_neighbourhood_optimal;
     }
     else {
         if(q.total_actors_at_q) {
-            if(q.total_actors_at_q == 1 && q.actors_of_type[t] == 1) return empty_neighbourhood_optimal_post_swap;
-            if(measure_segregation) return custom_util((q.total_actors_at_q-q.actors_of_type[t])/q.total_actors_at_q);
+            if(q.total_actors_at_q == 1 && q.actors_of_type[t] == 1) return empty_neighbourhood_optimal;
+            if(measure_segregation) return (q.total_actors_at_q-q.actors_of_type[t])/q.total_actors_at_q;
             else return custom_util(q.actors_of_type[t]/q.total_actors_at_q);
         }
         else return 0;
     }
 }
 
+function_space Simulator::get_cur_util_for_actor(Actor& a, const bool measure_segregation) {
+    if(a.cur_resource==-1) return -1;
+    if(!impact_aware) return get_util_for_type_at_q(a.type,resources[a.cur_resource],utility_function,measure_segregation);
+    else {
+        if(measure_segregation) return (resources[a.cur_resource].total_actors_at_q)? (resources[a.cur_resource].total_actors_at_q-resources[a.cur_resource].actors_of_type[a.type])/(resources[a.cur_resource].total_actors_at_q): 0;
+        else return utility_function((resources[a.cur_resource].actors_of_type[a.type])/(resources[a.cur_resource].total_actors_at_q));
+    }
+}
+
 bool Simulator::swap_resource_for_actor(Actor& a) {
-    function_space max_util = (a.cur_resource != -1)? get_util_for_type_at_q(a.type,resources[a.cur_resource],utility_function): -1;
+    function_space max_util = get_cur_util_for_actor(a);
     int max_q_idx = a.cur_resource;
     for(auto q_idx:a.available_resources) {
-        if(resource_q_available(resources[q_idx]) && get_util_for_type_at_q(a.type,resources[q_idx],utility_function) > max_util) {
+        if(
+        resource_q_available(resources[q_idx]) &&
+        q_idx != a.cur_resource &&
+        get_util_for_type_at_q(a.type,resources[q_idx],utility_function) > max_util
+        ){
             clog << "got util: " << get_util_for_type_at_q(a.type,resources[q_idx],utility_function) << " from " << q_idx << endl;
                 max_util = get_util_for_type_at_q(a.type,resources[q_idx],utility_function);
                 max_q_idx = q_idx;
@@ -73,7 +86,7 @@ int Simulator::step() {
     int swaps_made = 0;
     for(auto& a:actors) {
         swaps_made += swap_resource_for_actor(a);
-        clog << "after return: " << a.cur_resource << endl;
+        //clog << "after return: " << a.cur_resource << endl;
     }
     clog << "swaps made in step: " << swaps_made << endl;
     return swaps_made;
@@ -103,6 +116,6 @@ int Simulator::run_simulation(int steps, int data_collection_interval, vector<fu
 }
 
 Simulator::Simulator(vector<Actor> actors, vector<Resource> resources,
-                     function<function_space(function_space)> utility_function, const bool isolation_optimal) :
-        actors(actors), resources(resources), utility_function(utility_function), empty_neighbourhood_optimal_post_swap(isolation_optimal){
+                     function<function_space(function_space)> utility_function, const bool isolation_optimal, const bool impact_aware) :
+        actors(actors), resources(resources), utility_function(utility_function), empty_neighbourhood_optimal(isolation_optimal), impact_aware(impact_aware){
 }
