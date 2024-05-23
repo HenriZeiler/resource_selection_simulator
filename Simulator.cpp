@@ -10,12 +10,21 @@ bool Simulator::resource_q_available(const Resource q) {
 }
 
 function_space Simulator::get_util_for_type_at_q(actor_type t, Resource q, function<function_space(function_space)> custom_util, const bool measure_segregation) {
-    if(q.total_actors_at_q) {
-        if(q.total_actors_at_q == 1 && q.actors_of_type[t] == 1) return empty_neighbourhood_optimal_post_swap;
-        if(measure_segregation) return custom_util((q.total_actors_at_q-q.actors_of_type[t])/q.total_actors_at_q);
-        else return custom_util(q.actors_of_type[t]/q.total_actors_at_q);
+    if(impact_aware) {
+        if(q.total_actors_at_q) {
+            if(measure_segregation) return custom_util((q.total_actors_at_q-q.actors_of_type[t])/q.total_actors_at_q);
+            else return custom_util(q.actors_of_type[t]/q.total_actors_at_q);
+        }
+        else return empty_neighbourhood_optimal_post_swap;
     }
-    else return 0;
+    else {
+        if(q.total_actors_at_q) {
+            if(q.total_actors_at_q == 1 && q.actors_of_type[t] == 1) return empty_neighbourhood_optimal_post_swap;
+            if(measure_segregation) return custom_util((q.total_actors_at_q-q.actors_of_type[t])/q.total_actors_at_q);
+            else return custom_util(q.actors_of_type[t]/q.total_actors_at_q);
+        }
+        else return 0;
+    }
 }
 
 bool Simulator::swap_resource_for_actor(Actor& a) {
@@ -84,8 +93,8 @@ int Simulator::run_simulation(int steps, int data_collection_interval, vector<fu
             for(int q_idx=0;q_idx<resources.size();q_idx++) {
                 fraction_at_q_at_collection_step_for_type[q_idx].resize(fraction_at_q_at_collection_step_for_type[q_idx].size()+1);
                 for(int t=0; t<resources[q_idx].nr_of_types; t++) {
-                    if (resources[q_idx].total_actors_at_q) fraction_at_q_at_collection_step_for_type[q_idx][i].push_back(resources[q_idx].actors_of_type[t]/resources[q_idx].total_actors_at_q);
-                    else fraction_at_q_at_collection_step_for_type[q_idx][i].push_back(0);
+                    if (resources[q_idx].total_actors_at_q) fraction_at_q_at_collection_step_for_type[q_idx][i/data_collection_interval].push_back(resources[q_idx].actors_of_type[t]/resources[q_idx].total_actors_at_q);
+                    else fraction_at_q_at_collection_step_for_type[q_idx][i/data_collection_interval].push_back(0);
                 }
             }
         }

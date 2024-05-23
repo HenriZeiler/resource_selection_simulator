@@ -10,4 +10,5 @@ using namespace std;
 using function_space = double_t;
 using actor_type = int;
 //------------------------------------------------
+
 #endif //RESSOURCE_SELECTION_SIMULATOR_UTIL_H

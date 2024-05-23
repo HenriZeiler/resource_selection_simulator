@@ -9,9 +9,10 @@
 
 int main() {
     //-----Simulation Parameters-----
-    int sim_steps = 100;
-    int collection_data_interval = 10;
+    int sim_steps = 10;
+    int collection_data_interval = 1;
     int nr_of_types = 2;
+    auto utility_fct = [](function_space x){return x;};
     //-------------------------------
     //std::clog.setstate(std::ios_base::failbit); //disable logging
 
@@ -26,11 +27,11 @@ int main() {
     vector<Actor> actors;
     vector<Resource> resources;
     vector<int> tmp;
-    for(int i=0;i<30;i++) {
-        actors.push_back(Actor(i%2,vector{max(0,i-1),i,min(i+1,29)}));
-        resources.push_back(Resource(100,nr_of_types));
+    for(int i=0;i<10;i++) {
+        actors.push_back(Actor(i%2,vector{max(0,i-1),i,min(i+1,9)}));
+        resources.push_back(Resource(10,nr_of_types));
     }
-    Simulator sim = Simulator(actors,resources,[](function_space x){return (x<=1/2)? x: 1-x;},false);
+    Simulator sim = Simulator(actors,resources,utility_fct,true);
 
     vector<function_space> social_welfare_at_collection_step;
     vector<vector<vector<function_space>>> fraction_at_q_at_collection_step_for_type;

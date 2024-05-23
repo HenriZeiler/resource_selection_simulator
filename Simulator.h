@@ -13,6 +13,7 @@ using namespace std;
 typedef class Simulator {
 private:
     const bool empty_neighbourhood_optimal_post_swap = false;
+    const bool impact_aware = false;
     vector<Actor> actors;
     vector<Resource> resources;
     function<function_space(function_space)> utility_function;
