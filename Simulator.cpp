@@ -45,7 +45,7 @@ bool Simulator::swap_resource_for_actor(Actor& a) {
         q_idx != a.cur_resource &&
         get_util_for_type_at_q(a.type,resources[q_idx],utility_function) > max_util
         ){
-            clog << "got util: " << get_util_for_type_at_q(a.type,resources[q_idx],utility_function) << " from " << q_idx << endl;
+                clog << "got util: " << get_util_for_type_at_q(a.type,resources[q_idx],utility_function) << " from " << q_idx << endl;
                 max_util = get_util_for_type_at_q(a.type,resources[q_idx],utility_function);
                 max_q_idx = q_idx;
             }
@@ -76,9 +76,7 @@ function_space Simulator::get_total_utility(function<function_space(function_spa
 
 function_space Simulator::get_total_segregation_welfare(function<function_space(function_space)> utility_function) {
     function_space res = 0;
-    for(Actor a: actors) {
-        res += get_util_for_type_at_q(a.type, resources[a.cur_resource],utility_function,true);
-    }
+    for(Actor a: actors) res += get_util_for_type_at_q(a.type, resources[a.cur_resource],utility_function,true);
     return res;
 }
 
