@@ -12,7 +12,8 @@ int main() {
     int sim_steps = 10;
     int collection_data_interval = 1;
     int nr_of_types = 2;
-    auto utility_fct = [](function_space x){return (x<=0.5)? (2*x): (2-2*x);};
+    function_space peak = 0.25;
+    auto utility_fct = [peak](function_space x){return (x<=peak)? (x): (peak*(1-x)/(1-peak));};
     //-------------------------------
     //std::clog.setstate(std::ios_base::failbit); //disable logging
 
@@ -21,16 +22,16 @@ int main() {
     vector<int> tmp;
 
     //IAE Counterexample
-    /*for(int i=0;i<3;i++) resources.push_back(Resource(1000,nr_of_types));
+    for(int i=0;i<3;i++) resources.push_back(Resource(1000,nr_of_types));
     for(int i=0;i<4;i++) actors.push_back(Actor(0,vector{0}));
     for(int i=0;i<7;i++) actors.push_back(Actor(1,vector{0}));
     for(int i=0;i<5;i++) actors.push_back(Actor(0,vector{2}));
     for(int i=0;i<1;i++) actors.push_back(Actor(1,vector{2}));
     actors.push_back(Actor(0,vector{0,1}));
     actors.push_back(Actor(1,vector{1}));
-    actors.push_back(Actor(1,vector{1,2}));*/
+    actors.push_back(Actor(1,vector{1,2}));
 
-    Simulator sim = Simulator(actors,resources,utility_fct,true,true);
+    Simulator sim = Simulator(actors,resources,utility_fct,0,true);
 
     vector<function_space> social_welfare_at_collection_step;
     vector<vector<vector<function_space>>> fraction_at_q_at_collection_step_for_type;
