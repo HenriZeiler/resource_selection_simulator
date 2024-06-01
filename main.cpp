@@ -31,13 +31,24 @@ int main() {
     actors.push_back(Actor(1,vector{1}));
     actors.push_back(Actor(1,vector{1,2}));
 
-    Simulator sim = Simulator(actors,resources,utility_fct,0,true);
+    Simulator sim = Simulator(actors,resources,utility_fct,peak,0);
 
     vector<function_space> social_welfare_at_collection_step;
     vector<vector<vector<function_space>>> fraction_at_q_at_collection_step_for_type;
     vector<function_space> segregation_welfare_at_collection_step;
-    int equilibrium = sim.run_simulation(sim_steps,collection_data_interval,social_welfare_at_collection_step,fraction_at_q_at_collection_step_for_type,segregation_welfare_at_collection_step);
-    if(equilibrium != -1) visualize_fractions(equilibrium/collection_data_interval+1,resources.size(),fraction_at_q_at_collection_step_for_type);
-    else visualize_fractions(sim_steps/collection_data_interval+1,resources.size(),fraction_at_q_at_collection_step_for_type);
+    int equilibrium = sim.run_simulation(
+            sim_steps,
+            collection_data_interval,
+            social_welfare_at_collection_step,
+            fraction_at_q_at_collection_step_for_type,
+            segregation_welfare_at_collection_step);
+    if(equilibrium != -1) visualize_fractions(
+            equilibrium/collection_data_interval+1,
+            resources.size(),
+            fraction_at_q_at_collection_step_for_type);
+    else visualize_fractions(
+            sim_steps/collection_data_interval+1,
+            resources.size(),
+            fraction_at_q_at_collection_step_for_type);
     return 0;
 }

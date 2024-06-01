@@ -15,11 +15,11 @@ function_space Simulator::get_util_for_type_at_q(actor_type t, Resource q, funct
             if(measure_segregation) return (q.total_actors_at_q-q.actors_of_type[t])/(q.total_actors_at_q+1);
             else return custom_util((q.actors_of_type[t]+1)/(q.total_actors_at_q+1));
         }
-        else return empty_neighbourhood_optimal;
+        else return empty_neighbourhood_optimal*utility_function(peak);
     }
     else {
         if(q.total_actors_at_q) {
-            if(q.total_actors_at_q == 1 && q.actors_of_type[t] == 1) return empty_neighbourhood_optimal;
+            if(q.total_actors_at_q == 1 && q.actors_of_type[t] == 1) return empty_neighbourhood_optimal*utility_function(peak);
             if(measure_segregation) return (q.total_actors_at_q-q.actors_of_type[t])/q.total_actors_at_q;
             else return custom_util(q.actors_of_type[t]/q.total_actors_at_q);
         }
@@ -27,7 +27,7 @@ function_space Simulator::get_util_for_type_at_q(actor_type t, Resource q, funct
     }
 }
 
-function_space Simulator::get_cur_util_for_actor(Actor& a, const bool measure_segregation) {
+function_space Simulator::get_cur_util_for_actor(const Actor& a, const bool measure_segregation) {
     if(a.cur_resource==-1) return -1;
     if(!impact_aware) return get_util_for_type_at_q(a.type,resources[a.cur_resource],utility_function,measure_segregation);
     else {
@@ -37,6 +37,7 @@ function_space Simulator::get_cur_util_for_actor(Actor& a, const bool measure_se
 }
 
 bool Simulator::swap_resource_for_actor(Actor& a) {
+
     function_space max_util = get_cur_util_for_actor(a);
     int max_q_idx = a.cur_resource;
     for(auto q_idx:a.available_resources) {
@@ -45,12 +46,13 @@ bool Simulator::swap_resource_for_actor(Actor& a) {
         q_idx != a.cur_resource &&
         get_util_for_type_at_q(a.type,resources[q_idx],utility_function) > max_util
         ){
-                clog << "got util: " << get_util_for_type_at_q(a.type,resources[q_idx],utility_function) << " from " << q_idx << endl;
-                max_util = get_util_for_type_at_q(a.type,resources[q_idx],utility_function);
-                max_q_idx = q_idx;
+            clog << "got util: " << get_util_for_type_at_q(a.type,resources[q_idx],utility_function) << " from " << q_idx << endl;
+            max_util = get_util_for_type_at_q(a.type,resources[q_idx],utility_function);
+            max_q_idx = q_idx;
             }
         }
-    if(max_q_idx != a.cur_resource) {       //also handles case in which no adjacent resource has slots left and updates resources fractions
+    if(a.cur_resource != -1)clog << "gain: " << (max_util-get_cur_util_for_actor(a)) << "for min_improvement " << min_improvement << endl;
+    if(max_q_idx != a.cur_resource && (max_util-get_cur_util_for_actor(a)) > min_improvement + numeric_limits<function_space>::epsilon()) {       //also handles case in which no adjacent resource has slots left and updates resources fractions
         if(a.cur_resource != -1) {
             resources[a.cur_resource].actors_of_type[a.type]--;
             resources[a.cur_resource].total_actors_at_q--;
@@ -82,9 +84,11 @@ function_space Simulator::get_total_segregation_welfare(function<function_space(
 
 int Simulator::step() {
     int swaps_made = 0;
+    function_space utility_pre_swap = 0;
     for(auto& a:actors) {
+        utility_pre_swap = get_total_utility(utility_function);
         swaps_made += swap_resource_for_actor(a);
-        //clog << "after return: " << a.cur_resource << endl;
+        clog << "utility change caused by swap: " << get_total_utility(utility_function)-utility_pre_swap << endl;
     }
     clog << "swaps made in step: " << swaps_made << endl;
     return swaps_made;
@@ -114,6 +118,6 @@ int Simulator::run_simulation(int steps, int data_collection_interval, vector<fu
 }
 
 Simulator::Simulator(vector<Actor> actors, vector<Resource> resources,
-                     function<function_space(function_space)> utility_function, const bool isolation_optimal, const bool impact_aware) :
-        actors(actors), resources(resources), utility_function(utility_function), empty_neighbourhood_optimal(isolation_optimal), impact_aware(impact_aware){
+                     function<function_space(function_space)> utility_function, const function_space peak, const function_space epsilon, const bool isolation_optimal, const bool impact_aware) :
+        actors(actors), resources(resources), utility_function(utility_function), peak(peak), min_improvement(epsilon), empty_neighbourhood_optimal(isolation_optimal), impact_aware(impact_aware){
 }
