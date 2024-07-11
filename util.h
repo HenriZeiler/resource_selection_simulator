@@ -6,7 +6,7 @@
 #define RESSOURCE_SELECTION_SIMULATOR_UTIL_H
 
 using namespace std;
-//----------------MODEL PARAMETERS----------------
+//----------------MODEL SPECIFIERS----------------
 using function_space = double_t;
 using actor_type = int;
 //------------------------------------------------
