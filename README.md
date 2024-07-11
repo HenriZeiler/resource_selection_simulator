@@ -1,1 +1,1 @@
-# Simulator for asynchronous, impact-blind Strategic Ressource Selection Games
+# Simulator For Asynchronous Strategic Ressource Selection Games
