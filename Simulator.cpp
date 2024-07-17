@@ -11,32 +11,24 @@ bool Simulator::resource_q_available(const Resource q) {
 
 function_space Simulator::get_util_for_type_at_q(actor_type t, Resource q, function<function_space(function_space)> custom_util, const bool measure_segregation) {
     if(impact_aware) {
-        if(q.total_actors_at_q) {
-            if(measure_segregation) return (q.total_actors_at_q-q.actors_of_type[t])/(q.total_actors_at_q+1);
-            else return custom_util((q.actors_of_type[t]+1)/(q.total_actors_at_q+1));
-        }
-        else return empty_neighbourhood_optimal*utility_function(peak);
+        if(measure_segregation) return (q.total_actors_at_q-q.actors_of_type[t])/(q.total_actors_at_q+1);
+        else return custom_util((q.actors_of_type[t]+1)/(q.total_actors_at_q+1));
     }
     else {
         if(q.total_actors_at_q) {
-            if(q.total_actors_at_q == 1 && q.actors_of_type[t] == 1) return empty_neighbourhood_optimal*utility_function(peak);
             if(measure_segregation) return (q.total_actors_at_q-q.actors_of_type[t])/q.total_actors_at_q;
             else return custom_util(q.actors_of_type[t]/q.total_actors_at_q);
         }
-        else return 0;
+        else return empty_neighbourhood_optimal*utility_function(peak);
     }
 }
 
 double_t Simulator::get_fraction_for_type_at_q(actor_type t, Resource q) {
     if(impact_aware) {
-        if(q.total_actors_at_q) {
-            return (q.actors_of_type[t]+1)/(q.total_actors_at_q+1);
-        }
-        else return 0;
+        return (q.actors_of_type[t]+1)/(q.total_actors_at_q+1);
     }
     else {
         if(q.total_actors_at_q) {
-            if(q.total_actors_at_q == 1 && q.actors_of_type[t] == 1) return 1;
             return q.actors_of_type[t]/q.total_actors_at_q;
         }
         else return 0;

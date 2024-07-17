@@ -13,7 +13,7 @@ using namespace std;
 typedef class Simulator {
 private:
     const bool empty_neighbourhood_optimal = false;
-    const bool impact_aware = false;
+    const bool impact_aware = false;                        // in an impact blind setting, actors will always see p(0) at resources where only different type agents are. Thus these mono-typed resources will always stay that way.
     const vector<vector<bool>> allowed_swap_configs;        // {{behind->behind,behind->before},{before->behind,before->before}}
     const function_space min_improvement = 0;
     vector<Actor> actors;

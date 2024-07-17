@@ -30,6 +30,7 @@ int main() {
     actors.push_back(Actor(1,vector{1}));
     actors.push_back(Actor(1,vector{1,2}));*/
 
+    //behind to before jumps only counterexample
     for(int i=0;i<2;i++) resources.push_back(Resource(1000,nr_of_types));
     for(int i=0;i<3;i++) actors.push_back(Actor(0,vector{0}));
     actors.push_back(Actor(0,vector{0,1}));
