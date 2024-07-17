@@ -12,25 +12,32 @@ int main() {
     int sim_steps = 10;
     int collection_data_interval = 1;
     int nr_of_types = 2;
-    function_space peak = 0.25;
+    function_space peak = 0.21;
     auto utility_fct = [peak](function_space x){return (x<=peak)? (x): (peak*(1-x)/(1-peak));};
-    vector<vector<bool>> allowed_swap_configs = {{0,0},{1,0}};
+    vector<vector<bool>> allowed_swap_configs = {{0,1},{0,0}};
     //-------------------------------
     //std::clog.setstate(std::ios_base::failbit); //disable logging
 
     vector<Actor> actors;
     vector<Resource> resources;
     //IAE Counterexample
-    for(int i=0;i<3;i++) resources.push_back(Resource(1000,nr_of_types));
+    /*for(int i=0;i<3;i++) resources.push_back(Resource(1000,nr_of_types));
     for(int i=0;i<4;i++) actors.push_back(Actor(0,vector{0}));
     for(int i=0;i<7;i++) actors.push_back(Actor(1,vector{0}));
     for(int i=0;i<5;i++) actors.push_back(Actor(0,vector{2}));
     for(int i=0;i<1;i++) actors.push_back(Actor(1,vector{2}));
     actors.push_back(Actor(0,vector{0,1}));
     actors.push_back(Actor(1,vector{1}));
-    actors.push_back(Actor(1,vector{1,2}));
+    actors.push_back(Actor(1,vector{1,2}));*/
 
-    Simulator sim = Simulator(actors,resources,utility_fct,peak,0,true, false, allowed_swap_configs);
+    for(int i=0;i<2;i++) resources.push_back(Resource(1000,nr_of_types));
+    for(int i=0;i<3;i++) actors.push_back(Actor(0,vector{0}));
+    actors.push_back(Actor(0,vector{0,1}));
+    for(int i=0;i<12;i++) actors.push_back(Actor(1,vector{0}));
+    for(int i=0;i<1;i++) actors.push_back(Actor(0,vector{1}));
+    for(int i=0;i<4;i++) actors.push_back(Actor(1,vector{1}));
+
+    Simulator sim = Simulator(actors,resources,utility_fct,peak,0,true,false,allowed_swap_configs);
 
     vector<function_space> social_welfare_at_collection_step;
     vector<vector<vector<function_space>>> fraction_at_q_at_collection_step_for_type;

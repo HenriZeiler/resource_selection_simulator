@@ -14,7 +14,7 @@ typedef class Simulator {
 private:
     const bool empty_neighbourhood_optimal = false;
     const bool impact_aware = false;
-    const vector<vector<bool>> allowed_swap_configs;        // {{before->before,before->behind},{behind->before,behind->behind}}
+    const vector<vector<bool>> allowed_swap_configs;        // {{behind->behind,behind->before},{before->behind,before->before}}
     const function_space min_improvement = 0;
     vector<Actor> actors;
     vector<Resource> resources;
