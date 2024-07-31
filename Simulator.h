@@ -6,7 +6,7 @@
 #include <functional>
 #include "Resource.h"
 #include "Actor.h"
-#include "util.h"
+#include "model.h"
 
 using namespace std;
 

@@ -1,14 +1,13 @@
-//
-// Created by Henri Zeiler on 14.05.24.
-//
-
 #ifndef RESSOURCE_SELECTION_SIMULATOR_UTIL_H
 #define RESSOURCE_SELECTION_SIMULATOR_UTIL_H
 
+#include "actor.h"
+#include "Resource.h"
+#include <iostream>
+#include <random>
+
 using namespace std;
-//----------------MODEL SPECIFIERS----------------
-using function_space = double_t;
-using actor_type = int;
-//------------------------------------------------
+//root is always actor
+void bin_tree_game_construction(vector<Actor>& actors, vector<Resource>& resources, const int tree_height, const int nr_of_types);
 
 #endif //RESSOURCE_SELECTION_SIMULATOR_UTIL_H

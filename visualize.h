@@ -5,7 +5,7 @@
 #ifndef RESSOURCE_SELECTION_SIMULATOR_VISUALIZE_H
 #define RESSOURCE_SELECTION_SIMULATOR_VISUALIZE_H
 
-#include "util.h"
+#include "model.h"
 #include <vector>
 
 

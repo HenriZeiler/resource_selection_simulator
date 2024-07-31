@@ -6,7 +6,7 @@
 
 #include <vector>
 #include <functional>
-#include "util.h"
+#include "model.h"
 
 using namespace std;
 

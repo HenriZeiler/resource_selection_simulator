@@ -7,7 +7,7 @@
 
 #include <limits.h>
 #include <unordered_set>
-#include "util.h"
+#include "model.h"
 #define INF INT_MAX
 using namespace std;
 

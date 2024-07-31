@@ -51,7 +51,7 @@ bool Simulator::swap_resource_for_actor(Actor& a) {
     bool starts_before_peak = (a.cur_resource!=-1)? (resources[a.cur_resource].actors_of_type[a.type]/resources[a.cur_resource].total_actors_at_q) <= peak: 0;
     for(auto q_idx:a.available_resources) {
         if(a.available_resources.size()>1 && q_idx != a.cur_resource) {
-            clog << " starts before peak: " << starts_before_peak << " ends before peak " << (get_fraction_for_type_at_q(a.type,resources[q_idx])<=peak) << endl;
+            //clog << " starts before peak: " << starts_before_peak << " ends before peak " << (get_fraction_for_type_at_q(a.type,resources[q_idx])<=peak) << endl;
         }
         if(
         resource_q_available(resources[q_idx]) &&
@@ -85,7 +85,7 @@ bool Simulator::swap_resource_for_actor(Actor& a) {
 function_space Simulator::get_total_utility(function<function_space(function_space)> utility_function) {
     function_space res = 0;
     for(auto a: actors) {
-        res += get_util_for_type_at_q(a.type, resources[a.cur_resource],utility_function);
+        if(a.cur_resource != -1) res += get_util_for_type_at_q(a.type, resources[a.cur_resource],utility_function);
     }
     return res;
 }
