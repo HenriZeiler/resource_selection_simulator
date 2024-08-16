@@ -10,6 +10,7 @@ bool Simulator::resource_q_available(const Resource q) {
 }
 
 function_space Simulator::get_util_for_type_at_q(actor_type t, Resource q, function<function_space(function_space)> custom_util, const bool measure_segregation) {
+    //TODO fix measure_segregation
     if(impact_aware) {
         if(measure_segregation) return (q.total_actors_at_q-q.actors_of_type[t])/(q.total_actors_at_q+1);
         else return custom_util((q.actors_of_type[t]+1)/(q.total_actors_at_q+1));
@@ -118,7 +119,7 @@ int Simulator::run_simulation(int steps, int data_collection_interval, vector<fu
         }
         if(i%data_collection_interval==0) {
             social_welfare_at_collection_step.push_back(get_total_utility(utility_function));
-            segregation_welfare_at_collection_step.push_back(get_total_segregation_welfare([](int x){return x;}));
+            //segregation_welfare_at_collection_step.push_back(get_total_segregation_welfare([](int x){return x;}));
             for(int q_idx=0;q_idx<resources.size();q_idx++) {
                 fraction_at_q_at_collection_step_for_type[q_idx].resize(fraction_at_q_at_collection_step_for_type[q_idx].size()+1);
                 for(int t=0; t<resources[q_idx].nr_of_types; t++) {
