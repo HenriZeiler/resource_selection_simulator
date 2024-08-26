@@ -9,3 +9,5 @@ Actor::Actor(const actor_type type, vector<int> available_resources) :type(type)
     cur_resource = -1;
 }
 
+Actor::Actor(const actor_type type, vector<int> available_resources, int cur_resource) :type(type),available_resources(available_resources), cur_resource(cur_resource){
+}

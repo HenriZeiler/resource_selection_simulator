@@ -16,6 +16,7 @@ typedef struct Actor {
     int cur_resource;   //does not keep track of cur util as that can change due to external behaviour
     const vector<int> available_resources;  //0-indexed for compatibility with simulator.actors
     Actor(const actor_type type,vector<int> available_resources);
+    Actor(const actor_type type, vector<int> available_resources, int cur_resource);
 } Actor;
 
 

@@ -14,7 +14,7 @@ typedef class Simulator {
 private:
     const bool empty_neighbourhood_optimal = false;
     const bool impact_aware = false;                        // in an impact blind setting, actors will always see p(0) at resources where only different type agents are. Thus these mono-typed resources will always stay that way.
-    const vector<vector<bool>> allowed_swap_configs;        // {{behind->behind,behind->before},{before->behind,before->before}}
+    vector<vector<bool>> allowed_swap_configs;        // {{behind->behind,behind->before},{before->behind,before->before}}
     const function_space min_improvement = 0;
     vector<Actor> actors;
     vector<Resource> resources;
@@ -27,13 +27,22 @@ private:
     function_space get_total_utility(const function<function_space(function_space)> utility_function);
     function_space get_total_segregation_welfare(const function<function_space(function_space)> utility_function);
     int step();     //returns number of swaps in step
-
+    void game_to_textfile(const vector<Actor> actors, const vector<Resource> resources);
 public:
+    void game_from_text();
+    void game_from_save();
     function_space get_util_for_type_at_q(const actor_type t, const Resource q, const function<function_space(function_space)> custom_util, const bool measure_segregation = false);
     double_t get_fraction_for_type_at_q(actor_type t, Resource q);
     int run_simulation(int steps, int data_collection_interval, vector<function_space>& social_welfare_at_collection_step, vector<vector<vector<function_space>>>& fraction_at_q_at_collection_step, vector<function_space>& segregation_welfare_at_collection_step);
-    Simulator(const vector<Actor> actors, const vector<Resource> resources, const function<function_space(function_space)> utility_function, const function_space peak, const function_space epsilon = 0, const bool isolation_optimal = false, const bool impact_aware = false, const vector<vector<bool>> allowed_swap_configs = {{true,true},
+    Simulator(const vector<Actor> actors, const vector<Resource> resources, const function<function_space(function_space)> utility_function, const function_space peak, const function_space epsilon = 0, const bool isolation_optimal = false, const bool impact_aware = false, vector<vector<bool>> allowed_swap_configs = {{true,true},
                                                                                                                                                                                                                                                                                                                           {true,true}});
+
+    double_t get_average_fraction();
+    double_t get_fraction_dif();
+
+    bool check_if_v_in_range_around_q_for_type(Resource v, Resource q, int type);
+
+    int get_num_of_resources_in_range();
 } Simulator;
 
 

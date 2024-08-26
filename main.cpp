@@ -12,12 +12,13 @@ int main() {
     //-----Simulation Parameters-----
     int sample_count = 10000;
     int sim_steps = 100;
-    int collection_data_interval = sim_steps;
+    int collection_data_interval = 1;
     int nr_of_types = 2;
     int slice_subtrahend = 7;
-    function_space peak = 0.5;
+    function_space peak = 0.0001;
     auto utility_fct = [peak](function_space x){return (x<=peak)? (x): (peak*(1-x)/(1-peak));};
-    vector<vector<bool>> allowed_swap_configs = {{0,1},{0,0}};
+    auto monotonously_decr_util_fct = [](function_space x){return (!x)? 0: 1-x;};
+    vector<vector<bool>> allowed_swap_configs = {{1,0},{0,1}}; //{{behind->behind,behind->before},{before->behind,before->before}}
     //-------------------------------
     std::clog.setstate(std::ios_base::failbit); //disable logging
 
@@ -41,8 +42,11 @@ int main() {
     for(int i = 0;i<sample_count;i++) {
         vector<Actor> actors;
         vector<Resource> resources;
-        four_grid_torus_game_construction(actors,resources,10,10,nr_of_types);
-        Simulator sim = Simulator(actors, resources, utility_fct, peak, 0, false, true);
+       // four_grid_torus_game_construction(actors,resources,5,5,nr_of_types);
+        //random_graph_construction(actors,resources,10,750,nr_of_types);
+        //distribute_actors_over_adjacent_resources(actors,resources);
+        Simulator sim = Simulator(actors, resources, monotonously_decr_util_fct, 0.5, 0, false, true);
+        sim.game_from_save();
         vector<function_space> social_welfare_at_collection_step;
         vector<vector<vector<function_space>>> fraction_at_q_at_collection_step_for_type;
         vector<function_space> segregation_welfare_at_collection_step;
@@ -52,18 +56,18 @@ int main() {
                 social_welfare_at_collection_step,
                 fraction_at_q_at_collection_step_for_type,
                 segregation_welfare_at_collection_step);
-        if (equilibrium != -1); /*visualize_fractions(
+        if (equilibrium > 5) visualize_fractions(
                 //equilibrium/collection_data_interval+1,
                 resources.size(),
-                fraction_at_q_at_collection_step_for_type);*/
-        else {
+                fraction_at_q_at_collection_step_for_type);
+        else if(equilibrium==-1){
             //vector<vector<vector<function_space>>> sliced_fraction_at_q_at_collection_step_for_type = vector<vector<vector<function_space>>>(fraction_at_q_at_collection_step_for_type.begin() + 1, fraction_at_q_at_collection_step_for_type.end() - min(slice_subtrahend,fraction_at_q_at_collection_step_for_type.size()));
-            visualize_fractions(
+            /*visualize_fractions(
                     //sim_steps / collection_data_interval + 1,
                     resources.size(),
-                    fraction_at_q_at_collection_step_for_type);
+                    fraction_at_q_at_collection_step_for_type);*/
             int c=0;
-            for(auto a: actors) cout << "actor nr. " << c++ << " of folor: " << a.type << endl;
+            for(auto a: actors) cout << "actor nr. " << c++ << " of color: " << a.type << endl;
             return 0;
         }
     }
